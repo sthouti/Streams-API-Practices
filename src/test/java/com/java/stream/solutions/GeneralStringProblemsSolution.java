@@ -55,4 +55,14 @@ public class GeneralStringProblemsSolution {
         .filter(word -> word.replaceAll("[aeiouAEIOU]", "").length() == word.length() - length)
         .toList();
   }
+
+  public static Map<String, Long> numberOfOccurenceOfEachWord(String input) {
+    return Arrays.stream(input.split(" "))
+        .collect(
+            Collectors.groupingBy(Function.identity(), LinkedHashMap::new, Collectors.counting()));
+  }
+
+  public static String reverseStringWithSpecialCharacters(String input) {
+    return input.chars().mapToObj(x -> (char) x).reduce("", (a, b) -> b + a, (a, b) -> b + a);
+  }
 }

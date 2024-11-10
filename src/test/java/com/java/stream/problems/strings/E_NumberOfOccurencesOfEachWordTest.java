@@ -24,7 +24,4 @@ public class E_NumberOfOccurencesOfEachWordTest {
 
     assertEquals(mySolution, yourSolution);
   }
-
-    assertEquals(mySolution, yourSolution);
-  }
 }

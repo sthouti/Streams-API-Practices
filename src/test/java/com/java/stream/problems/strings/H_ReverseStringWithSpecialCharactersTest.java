@@ -5,9 +5,8 @@ import org.junit.jupiter.api.Test;
 
 public class H_ReverseStringWithSpecialCharactersTest {
     @Test
-    @Disabled
-      void testReverseStringWithSpecialCharactersTest(){
+    void testReverseStringWithSpecialCharactersTest(){
 
-      }
+    }
 
 }

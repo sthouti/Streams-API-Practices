@@ -14,11 +14,15 @@ import org.junit.jupiter.api.Test;
 class B_FirstNonRepeatingCharacterTest {
 
   @Test
-  @Disabled
   void testFirstNonRepeatingCharacter() {
     final var input =
         "The quick brown fox jumps over the lazy dog, find the first non repeated character.";
-    final var yourSolution = ' ';
+    final var yourSolution = input
+            .chars()
+            .mapToObj(i -> (char)i)
+            .filter(c -> input.indexOf(c) == input.lastIndexOf(c))
+            .findFirst()
+            .orElse(null);
     final var mySolution = InterviewProblemSolutions.firstNonRepeatingCharacter(input);
 
     Assertions.assertEquals(mySolution, yourSolution);

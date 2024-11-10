@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 
 public class E_NumberOfOccurencesOfEachWordTest {
   @Test
-  @Disabled
   public void numberOfOccurencesOfEachWord() {
     final var input = "the quick brown fox jumps right over the little lazy dog little";
     final Map<String, Long> mySolution =
@@ -27,7 +26,8 @@ public class E_NumberOfOccurencesOfEachWordTest {
             Map.entry("fox", 1L),
             Map.entry("little", 2L));
 
-    String yourSolution = "";
+    Map<String, Long> yourSolution = Arrays.stream(input.split(" "))
+            .collect(Collectors.toMap(Function.identity(), i -> 1L, Long::sum));
     assertEquals(mySolution, yourSolution);
   }
 

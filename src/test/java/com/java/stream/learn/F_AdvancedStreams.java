@@ -9,15 +9,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -41,9 +38,11 @@ public class F_AdvancedStreams {
      * @throws IOException
      */
     @Test
-    @Disabled
     public void f1_mapLengthToWordList() throws IOException {
-        Map<Integer, List<String>> result = null; // TODO
+        Map<Integer, List<String>> result = reader
+                .lines()
+                .flatMap(SPLIT_PATTERN::splitAsStream)
+                .collect(Collectors.groupingBy(String::length));
 
         assertEquals(10, result.get(7).size());
         assertEquals(Set.of("beauty's", "increase", "ornament"), new HashSet<>(result.get(8)));
@@ -67,9 +66,12 @@ public class F_AdvancedStreams {
      *
      * @throws IOException
      */
-    @Test @Disabled
+    @Test
     public void f2_mapLengthToWordCount() throws IOException {
-        Map<Integer, Long> result = null; // TODO
+        Map<Integer, Long> result = reader
+                .lines()
+                .flatMap(SPLIT_PATTERN::splitAsStream)
+                .collect(Collectors.groupingBy(String::length, Collectors.counting()));
 
         assertEquals(Map.ofEntries(entry( 1,  1L),
                         entry( 2, 11L),
@@ -103,9 +105,16 @@ public class F_AdvancedStreams {
      *
      * @throws IOException
      */
-    @Test @Disabled
+    @Test
     public void f3_wordFrequencies() throws IOException {
-        Map<String, Long> result = null; // TODO
+//        Map<String, Long> result = reader
+//                .lines()
+//                .flatMap(SPLIT_PATTERN::splitAsStream)
+//                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+        Map<String, Long> result = reader
+                .lines()
+                .flatMap(SPLIT_PATTERN::splitAsStream)
+                .collect(Collectors.toMap(Function.identity(), a -> Long.valueOf(1), Long::sum));
 
         assertEquals(2L, (long)result.get("tender"));
         assertEquals(6L, (long)result.get("the"));
@@ -142,9 +151,12 @@ public class F_AdvancedStreams {
      *
      * @throws IOException
      */
-    @Test @Disabled
+    @Test
     public void f4_nestedMaps() throws IOException {
-        Map<String, Map<Integer, List<String>>> result = null; // TODO
+        Map<String, Map<Integer, List<String>>> result = reader
+                .lines()
+                .flatMap(SPLIT_PATTERN::splitAsStream)
+                .collect(Collectors.groupingBy(s -> s.substring(0, 1), Collectors.groupingBy(String::length)));
 
         assertEquals("[abundance]", result.get("a").get(9).toString());
         assertEquals("[by, be, by]", result.get("b").get(2).toString());
@@ -172,12 +184,12 @@ public class F_AdvancedStreams {
      * in this stream. Since the input is a stream, this necessitates making a single
      * pass over the input.
      */
-    @Test @Disabled
+    @Test
     public void f5_separateOddEvenSums() {
         IntStream input = new Random(987523).ints(20, 0, 100);
-
-        int sumEvens = 0; // TODO
-        int sumOdds  = 0; // TODO
+        Map<Boolean, Integer> sums = input.boxed().collect(Collectors.partitioningBy(s -> s % 2 == 0, Collectors.summingInt(Integer::intValue)));
+        int sumEvens = sums.get(true);
+        int sumOdds  = sums.get(false);
 
         assertEquals(516, sumEvens);
         assertEquals(614, sumOdds);
@@ -200,16 +212,19 @@ public class F_AdvancedStreams {
      * is a parallel stream, so you MUST write a proper combiner function to get the
      * correct result.
      */
-    @Test @Disabled
+    @Test
     public void f6_insertBeginningAndEnd() {
         Stream<String> input = List.of(
                         "a", "b", "c", "d", "e", "f", "g", "h", "i", "j",
                         "k", "l", "m", "n", "o", "p", "q", "r", "s", "t")
                 .parallelStream();
 
-        String result = input.collect(null, null, null).toString();
-        // TODO fill in lambda expressions or method references
-        // in place of the nulls in the line above.
+        String result = input.collect(StringBuilder::new, (a, b) -> {
+            a.insert(0, b).append(b);
+        }, (a, b) -> {;
+            a.insert(0, b.substring(0, b.length() / 2));
+            a.append(b.substring(b.length() / 2));
+        }).toString();
 
         assertEquals("tsrqponmlkjihgfedcbaabcdefghijklmnopqrst", result);
     }
@@ -249,11 +264,13 @@ public class F_AdvancedStreams {
         // rely on implicit no-arg constructor
 
         void accumulate(String s) {
-            // TODO write code to accumulate a single string into this object
+            set.add(s);
+            ++count;
         }
 
         void combine(TotalAndDistinct other) {
-            // TODO write code to combine the other object into this one
+            count += other.count;
+            set.addAll(other.set);
         }
 
         int getTotalCount() { return count; }
@@ -265,7 +282,7 @@ public class F_AdvancedStreams {
     // Don't overthink it.
     // </editor-fold>
 
-    @Test @Disabled
+    @Test
     public void f7_countTotalAndDistinctWords() {
         List<String> allWords = reader.lines()
                 .map(String::toLowerCase)
@@ -297,8 +314,9 @@ public class F_AdvancedStreams {
 
     @BeforeEach
     public void z_setUpBufferedReader() throws IOException {
-        reader = Files.newBufferedReader(
-                Paths.get("SonnetI.txt"), StandardCharsets.UTF_8);
+        reader =
+                new BufferedReader(
+                        new InputStreamReader(this.getClass().getResource("/SonnetI.txt").openStream()));
     }
 
     @AfterEach

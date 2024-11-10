@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+
 /*
  * Given A String
  * Find the highest number of vowels present in a word.
@@ -17,12 +19,14 @@ import org.junit.jupiter.api.Test;
  * */
 public class E_WordWithMaxNumberOfVowelsTest {
 
-  @Disabled
   @Test
   void testNumberOfVowels() {
     var input = Faker.instance().chuckNorris().fact();
     final var mySolution = InterviewProblemSolutions.maxNumberOfVowels(input);
-    final var yourSolution = 0;
+    final var yourSolution = Arrays.stream(input.split(" "))
+            .mapToInt(s -> s.length() - s.replaceAll("[aeiouAEIOU]", "").length())
+            .max()
+            .orElse(0);
     Assertions.assertEquals(mySolution, yourSolution);
   }
 }

@@ -1,10 +1,18 @@
 package com.java.stream.problems.numbers;
 
 import com.java.stream.solutions.GeneralNumbersProblemSolution;
+
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+
+import static java.lang.Integer.sum;
 
 /*
  * Given a numeric array , re arrange the elements to form a smallest possible value.
@@ -18,11 +26,10 @@ import org.junit.jupiter.api.Test;
 public class B_SortElementTest {
 
   @Test
-  @Disabled
   public void test() {
     var input = List.of(1, 34, 3, 98, 9, 76, 45, 4);
     var mySolution = GeneralNumbersProblemSolution.getSmallestPossibleValue(input);
-    var yourSolution = "";
+    var yourSolution = input.stream().map(String::valueOf).sorted().collect(Collectors.joining());
 
     Assertions.assertEquals(mySolution, yourSolution);
   }

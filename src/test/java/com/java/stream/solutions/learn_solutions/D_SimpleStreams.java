@@ -19,7 +19,6 @@ import org.junit.jupiter.api.*;
  * Some of these exercises use a BufferedReader variable
  * named "reader" that the test has set up for you.
  */
-@Disabled
 public class D_SimpleStreams {
     /**
      * Given a list of words, create an output list that contains

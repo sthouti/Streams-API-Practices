@@ -13,10 +13,9 @@ import org.junit.jupiter.api.Test;
  */
 public class A_ExtractIntegersTest {
     @Test
-    @Disabled
     void testCheckAllIntegersWithoutAlphabets(){
         var input = List.of("1","12","12a","a12");
-        var yourSolution = List.of();
+        var yourSolution = input.stream().filter(s -> s.matches("\\d+")).toList();
         var mySolution = GeneralNumbersProblemSolution.getNumberOnly(input);
 
         Assertions.assertEquals(mySolution, yourSolution);
